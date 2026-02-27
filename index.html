@@ -1,0 +1,866 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0b0b0d" />
+  <meta name="description" content="Red Blood Journal — Transmissions. Hybrid investigative dossiers, allegorical archives, and classified-style editorial briefings." />
+
+  <title>Red Blood Journal — Transmissions</title>
+
+  <style>
+    :root{
+      --bg: #0b0b0d;
+      --panel: rgba(18,18,22,.92);
+      --paper: rgba(235, 228, 210, .10);
+      --ink: rgba(245,245,247,.92);
+      --muted: rgba(245,245,247,.70);
+      --faint: rgba(245,245,247,.46);
+      --line: rgba(245,245,247,.14);
+
+      --blood: #b1001a;
+      --blood2: #ff2a3a;
+
+      --serif: ui-serif, "Iowan Old Style", "Palatino Linotype", Palatino, Garamond, Georgia, serif;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+
+      --radius: 18px;
+      --shadow: 0 18px 60px rgba(0,0,0,.55);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body{
+      margin: 0;
+      color: var(--ink);
+      background: radial-gradient(1200px 600px at 20% -10%, rgba(177,0,26,.22), transparent 55%),
+                  radial-gradient(900px 500px at 90% 10%, rgba(255,42,58,.10), transparent 55%),
+                  radial-gradient(900px 700px at 30% 120%, rgba(235,228,210,.08), transparent 60%),
+                  linear-gradient(180deg, #070709 0%, #0b0b0d 55%, #070709 100%);
+      font-family: var(--sans);
+      letter-spacing: .2px;
+      overflow-x: hidden;
+    }
+
+    /* Subtle “paper + film grain” */
+    body::before{
+      content:"";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 30% 20%, rgba(255,255,255,.05), transparent 35%),
+        radial-gradient(circle at 70% 60%, rgba(255,255,255,.03), transparent 40%),
+        repeating-linear-gradient(0deg, rgba(255,255,255,.02) 0px, rgba(255,255,255,.02) 1px, transparent 2px, transparent 6px);
+      mix-blend-mode: overlay;
+      opacity: .35;
+      filter: contrast(120%) saturate(90%);
+    }
+
+    a { color: inherit; text-decoration: none; }
+    a:hover { text-decoration: none; }
+
+    .wrap{
+      width: min(1180px, 92vw);
+      margin: 0 auto;
+      padding: 18px 0 70px;
+    }
+
+    /* Top bar */
+    header{
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      backdrop-filter: blur(12px);
+      background: linear-gradient(180deg, rgba(11,11,13,.82), rgba(11,11,13,.55));
+      border-bottom: 1px solid var(--line);
+    }
+
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 0;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap: 12px;
+      min-width: 240px;
+    }
+
+    .sigil{
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background:
+        linear-gradient(135deg, rgba(177,0,26,.9), rgba(255,42,58,.25)),
+        radial-gradient(circle at 20% 25%, rgba(255,255,255,.28), transparent 55%);
+      box-shadow: 0 12px 30px rgba(177,0,26,.18);
+      position: relative;
+      overflow:hidden;
+      border: 1px solid rgba(255,255,255,.12);
+    }
+    .sigil::after{
+      content:"";
+      position:absolute;
+      inset:-40%;
+      background: repeating-linear-gradient(45deg, rgba(0,0,0,.0) 0px, rgba(0,0,0,.0) 10px, rgba(0,0,0,.25) 12px);
+      transform: rotate(15deg);
+      opacity:.55;
+    }
+
+    .brand h1{
+      margin: 0;
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: 15px;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      line-height: 1.2;
+    }
+    .brand .sub{
+      font-family: var(--mono);
+      color: var(--faint);
+      font-size: 11px;
+      letter-spacing: .6px;
+      margin-top: 2px;
+    }
+
+    nav{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap: 8px;
+      border: 1px solid var(--line);
+      padding: 10px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.03);
+      transition: transform .12s ease, border-color .12s ease, background .12s ease;
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: .3px;
+      color: var(--muted);
+      user-select:none;
+    }
+    .pill:hover{
+      transform: translateY(-1px);
+      border-color: rgba(255,255,255,.22);
+      background: rgba(255,255,255,.06);
+      color: var(--ink);
+    }
+    .pill .dot{
+      width: 7px;
+      height: 7px;
+      border-radius: 99px;
+      background: var(--blood);
+      box-shadow: 0 0 0 3px rgba(177,0,26,.18);
+    }
+
+    /* Hero */
+    .hero{
+      padding: 26px 0 20px;
+    }
+    .heroGrid{
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .card{
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position: relative;
+    }
+
+    .heroMain{
+      padding: 26px 24px 22px;
+      min-height: 320px;
+    }
+
+    .kicker{
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      border: 1px dashed rgba(245,245,247,.26);
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--muted);
+      background: rgba(0,0,0,.18);
+    }
+    .badge strong{
+      color: var(--ink);
+      font-weight: 700;
+      letter-spacing: .7px;
+    }
+
+    .stamp{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding: 9px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(177,0,26,.45);
+      background: rgba(177,0,26,.12);
+      color: rgba(255,230,235,.92);
+      font-family: var(--mono);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1.1px;
+      position: relative;
+      overflow:hidden;
+    }
+    .stamp::after{
+      content:"";
+      position:absolute;
+      inset:-30%;
+      background: repeating-linear-gradient(45deg, rgba(255,255,255,.0) 0px, rgba(255,255,255,.0) 8px, rgba(255,255,255,.08) 10px);
+      transform: rotate(-10deg);
+      opacity: .7;
+      pointer-events:none;
+    }
+
+    .heroTitle{
+      margin: 12px 0 10px;
+      font-family: var(--serif);
+      font-weight: 800;
+      font-size: clamp(30px, 3.2vw, 44px);
+      line-height: 1.06;
+      letter-spacing: .6px;
+      text-transform: uppercase;
+    }
+
+    .heroDesc{
+      margin: 0;
+      max-width: 64ch;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .heroActions{
+      display:flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap: 10px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: .4px;
+      color: var(--ink);
+      cursor: pointer;
+      transition: transform .12s ease, background .12s ease, border-color .12s ease;
+      user-select: none;
+    }
+    .btn:hover{
+      transform: translateY(-1px);
+      background: rgba(255,255,255,.08);
+      border-color: rgba(255,255,255,.22);
+    }
+    .btnPrimary{
+      border-color: rgba(177,0,26,.55);
+      background: linear-gradient(135deg, rgba(177,0,26,.40), rgba(255,42,58,.12));
+      box-shadow: 0 18px 40px rgba(177,0,26,.16);
+    }
+    .btnPrimary:hover{
+      background: linear-gradient(135deg, rgba(177,0,26,.52), rgba(255,42,58,.18));
+    }
+
+    /* Side panel: search + quick filters */
+    .heroSide{
+      padding: 18px;
+      display:flex;
+      flex-direction: column;
+      gap: 12px;
+      min-height: 320px;
+    }
+
+    .panelTitle{
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: .9px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin: 4px 0 0;
+    }
+
+    .search{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      padding: 12px 12px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: rgba(0,0,0,.22);
+    }
+    .search input{
+      width: 100%;
+      background: transparent;
+      border: 0;
+      outline: none;
+      color: var(--ink);
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: .2px;
+    }
+    .search input::placeholder{ color: rgba(245,245,247,.40); }
+
+    .filters{
+      display:flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .chip{
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      color: var(--muted);
+      padding: 9px 10px;
+      border-radius: 999px;
+      font-family: var(--mono);
+      font-size: 12px;
+      cursor: pointer;
+      transition: transform .12s ease, background .12s ease, border-color .12s ease, color .12s ease;
+      user-select:none;
+    }
+    .chip:hover{ transform: translateY(-1px); background: rgba(255,255,255,.06); color: var(--ink); }
+    .chip.active{
+      border-color: rgba(177,0,26,.55);
+      background: rgba(177,0,26,.16);
+      color: rgba(255,235,238,.92);
+    }
+
+    .sideNote{
+      margin-top: auto;
+      border-top: 1px solid var(--line);
+      padding-top: 12px;
+      color: var(--faint);
+      font-size: 12px;
+      line-height: 1.55;
+      font-family: var(--sans);
+    }
+    .sideNote code{
+      font-family: var(--mono);
+      font-size: 12px;
+      color: rgba(255,235,238,.88);
+    }
+
+    /* Section headings */
+    .sectionHead{
+      display:flex;
+      align-items:flex-end;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 26px 0 12px;
+    }
+    .sectionHead h2{
+      margin: 0;
+      font-family: var(--serif);
+      text-transform: uppercase;
+      letter-spacing: .9px;
+      font-size: 18px;
+    }
+    .sectionHead .meta{
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--faint);
+      letter-spacing: .4px;
+    }
+
+    /* Grid list */
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .tx{
+      padding: 16px 16px 14px;
+      position: relative;
+      border-top: 1px solid rgba(255,255,255,.06);
+    }
+
+    .txHeader{
+      display:flex;
+      align-items:flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .txCode{
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: .5px;
+      color: rgba(255,235,238,.88);
+    }
+    .txDate{
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--faint);
+      letter-spacing: .3px;
+      white-space: nowrap;
+    }
+
+    .txTitle{
+      margin: 0 0 8px;
+      font-family: var(--serif);
+      font-size: 16px;
+      letter-spacing: .4px;
+      text-transform: uppercase;
+      line-height: 1.22;
+    }
+
+    .txBlurb{
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .txTags{
+      display:flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .tag{
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: .3px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      color: var(--faint);
+      padding: 6px 8px;
+      border-radius: 999px;
+    }
+
+    .tx a.blockLink{
+      display:block;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      overflow:hidden;
+      background: rgba(0,0,0,.16);
+      transition: transform .14s ease, border-color .14s ease, background .14s ease;
+    }
+    .tx a.blockLink:hover{
+      transform: translateY(-2px);
+      border-color: rgba(255,255,255,.24);
+      background: rgba(255,255,255,.04);
+    }
+
+    /* Footer */
+    footer{
+      margin-top: 28px;
+      border-top: 1px solid var(--line);
+      padding: 22px 0 0;
+      color: var(--faint);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+    .footGrid{
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 16px;
+      align-items: start;
+    }
+    .footTitle{
+      font-family: var(--serif);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: rgba(245,245,247,.78);
+      margin: 0 0 8px;
+    }
+    .footLinks{
+      display:flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+    .footLinks a{
+      font-family: var(--mono);
+      padding: 8px 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255,255,255,.03);
+      color: var(--muted);
+    }
+    .footLinks a:hover{
+      border-color: rgba(255,255,255,.24);
+      color: var(--ink);
+      background: rgba(255,255,255,.06);
+    }
+
+    /* Responsive */
+    @media (max-width: 980px){
+      .heroGrid{ grid-template-columns: 1fr; }
+      .grid{ grid-template-columns: 1fr 1fr; }
+      .footGrid{ grid-template-columns: 1fr; }
+      .footLinks{ justify-content: flex-start; }
+    }
+    @media (max-width: 620px){
+      .grid{ grid-template-columns: 1fr; }
+      .brand{ min-width: auto; }
+      nav{ gap: 8px; }
+      .pill{ padding: 9px 10px; }
+    }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce){
+      * { transition: none !important; scroll-behavior: auto !important; }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="wrap">
+      <div class="topbar">
+        <a class="brand" href="#" aria-label="Red Blood Journal Home">
+          <div class="sigil" aria-hidden="true"></div>
+          <div>
+            <h1>Red Blood Journal</h1>
+            <div class="sub">TRANSMISSIONS • ARCHIVE INDEX</div>
+          </div>
+        </a>
+
+        <nav aria-label="Primary navigation">
+          <a class="pill" href="#latest"><span class="dot"></span>Latest</a>
+          <a class="pill" href="#archive"><span class="dot"></span>Archive</a>
+          <a class="pill" href="#about"><span class="dot"></span>About</a>
+          <a class="pill" href="#contact"><span class="dot"></span>Contact</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <!-- HERO -->
+    <section class="hero" id="home">
+      <div class="heroGrid">
+        <div class="card heroMain">
+          <div class="kicker">
+            <div class="badge">
+              <span>Desk:</span> <strong>Strategic Forecasting Division</strong>
+            </div>
+            <div class="stamp">PUBLIC / REDACTED</div>
+          </div>
+
+          <h2 class="heroTitle">Transmissions</h2>
+          <p class="heroDesc">
+            Hybrid investigative dossiers, allegorical archives, and classified-style editorial briefings.
+            Index, filter, and publish new packets without breaking the aesthetic: serif authority, mono metadata, and a controlled red signal.
+          </p>
+
+          <div class="heroActions">
+            <a class="btn btnPrimary" href="#latest" aria-label="Jump to latest transmissions">
+              ▸ View Latest
+            </a>
+            <a class="btn" href="#archive" aria-label="Open archive index">
+              ▸ Browse Archive
+            </a>
+            <a class="btn" href="#about" aria-label="Read about Red Blood Journal">
+              ▸ What Is RBJ?
+            </a>
+          </div>
+        </div>
+
+        <aside class="card heroSide" aria-label="Search and filters">
+          <div>
+            <div class="panelTitle">Search the Archive</div>
+            <div class="search" role="search">
+              <span aria-hidden="true">⌕</span>
+              <input id="searchInput" type="search" placeholder="Search code, title, tags…" autocomplete="off" />
+            </div>
+          </div>
+
+          <div>
+            <div class="panelTitle">Quick Filters</div>
+            <div class="filters" role="group" aria-label="Quick filters">
+              <button class="chip active" data-filter="all" type="button">All</button>
+              <button class="chip" data-filter="hybrid" type="button">Hybrid Format</button>
+              <button class="chip" data-filter="allegory" type="button">Parallel Planet</button>
+              <button class="chip" data-filter="geopolitics" type="button">Geopolitics</button>
+              <button class="chip" data-filter="health" type="button">Health / Science</button>
+              <button class="chip" data-filter="media" type="button">Media / Narrative</button>
+            </div>
+          </div>
+
+          <div class="sideNote">
+            <div><strong>Publishing note:</strong></div>
+            <div>
+              Link each transmission to <code>/transmissions/&lt;slug&gt;/</code> or to a static HTML/PDF endpoint.
+              This homepage includes a small client-side filter for fast browsing.
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- LATEST -->
+    <section id="latest" aria-label="Latest transmissions">
+      <div class="sectionHead">
+        <h2>Latest Dispatches</h2>
+        <div class="meta">Updated: <span id="updatedAt">—</span></div>
+      </div>
+
+      <div class="grid" id="txGrid">
+        <!-- Card 1 -->
+        <article class="tx">
+          <a class="blockLink" href="/transmissions/rbj-2026-glyphosate-archive/" data-tags="hybrid health">
+            <div class="txHeader">
+              <div class="txCode">T#: RBJ-2026-GLYPHOSATE-ARCHIVE</div>
+              <div class="txDate" data-date="2026-02-24">2026-02-24</div>
+            </div>
+            <h3 class="txTitle">The Glyphosate Archive</h3>
+            <p class="txBlurb">
+              Corporate science, regulatory capture, and the manufactured normal—mapping how acceptable knowledge gets assembled.
+            </p>
+            <div class="txTags">
+              <span class="tag">HYBRID</span><span class="tag">HEALTH</span><span class="tag">REGULATORY</span>
+            </div>
+          </a>
+        </article>
+
+        <!-- Card 2 -->
+        <article class="tx">
+          <a class="blockLink" href="/transmissions/rbj-ht-consolidation-arc/" data-tags="allegory hybrid">
+            <div class="txHeader">
+              <div class="txCode">T#: HT-CONSOLIDATION-ARC</div>
+              <div class="txDate" data-date="2026-02-25">2026-02-25</div>
+            </div>
+            <h3 class="txTitle">Htrae: The Consolidation Arc</h3>
+            <p class="txBlurb">
+              A parallel-planet archive tracking centralization, immunity codes, and engineered obedience through moral architecture.
+            </p>
+            <div class="txTags">
+              <span class="tag">PARALLEL PLANET</span><span class="tag">ALLEGORY</span><span class="tag">POWER</span>
+            </div>
+          </a>
+        </article>
+
+        <!-- Card 3 -->
+        <article class="tx">
+          <a class="blockLink" href="/transmissions/rbj-2026-hero-paradox/" data-tags="allegory media">
+            <div class="txHeader">
+              <div class="txCode">T#: RBJ-2026-HERO-PARADOX</div>
+              <div class="txDate" data-date="2026-02-22">2026-02-22</div>
+            </div>
+            <h3 class="txTitle">The Hero Paradox</h3>
+            <p class="txBlurb">
+              When fear governs the many—and peace with mortality threatens the throne. A study in calibrated dread.
+            </p>
+            <div class="txTags">
+              <span class="tag">PSYCHOLOGY</span><span class="tag">NARRATIVE</span><span class="tag">ALLEGORY</span>
+            </div>
+          </a>
+        </article>
+      </div>
+    </section>
+
+    <!-- ARCHIVE -->
+    <section id="archive" aria-label="Archive">
+      <div class="sectionHead">
+        <h2>Archive Index</h2>
+        <div class="meta">Tip: Use search + filters above</div>
+      </div>
+
+      <div class="card" style="padding: 14px 16px;">
+        <div style="display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between;">
+          <div style="font-family: var(--mono); color: var(--muted); font-size: 12px;">
+            Archive entries can be generated from JSON, a CMS, or static pages. This placeholder list shows the intended structure.
+          </div>
+          <a class="btn" href="/transmissions/" aria-label="Go to transmissions index">▸ Full Index</a>
+        </div>
+
+        <div style="margin-top: 12px; border-top: 1px solid var(--line); padding-top: 12px;">
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div style="border: 1px solid var(--line); border-radius: 16px; padding: 14px; background: rgba(0,0,0,.14);">
+              <div style="font-family: var(--mono); color: rgba(255,235,238,.88); font-size: 12px; letter-spacing:.4px;">SERIES</div>
+              <div style="margin-top:8px; color: var(--muted); font-size: 13px; line-height: 1.55;">
+                Multi-part runs (I–V), dossiers, and thematic arcs.
+              </div>
+            </div>
+
+            <div style="border: 1px solid var(--line); border-radius: 16px; padding: 14px; background: rgba(0,0,0,.14);">
+              <div style="font-family: var(--mono); color: rgba(255,235,238,.88); font-size: 12px; letter-spacing:.4px;">ANNEXES</div>
+              <div style="margin-top:8px; color: var(--muted); font-size: 13px; line-height: 1.55;">
+                Counterintelligence notes, timelines, source maps, and pattern signals.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about" aria-label="About Red Blood Journal">
+      <div class="sectionHead">
+        <h2>About</h2>
+        <div class="meta">Classification: Editorial / Public</div>
+      </div>
+
+      <div class="card" style="padding: 18px 18px 16px;">
+        <p style="margin:0 0 10px; color: var(--muted); line-height:1.65;">
+          <strong style="color: var(--ink); font-family: var(--serif); letter-spacing:.5px; text-transform: uppercase;">Red Blood Journal</strong>
+          is a publication format for structured transmissions: reports written with dossier discipline, archive logic, and a controlled aesthetic.
+        </p>
+
+        <ul style="margin: 0; padding-left: 18px; color: var(--muted); line-height: 1.7;">
+          <li><span style="color: var(--ink);">Hybrid Format:</span> narrative + annexes + signals + timeline-ready structure.</li>
+          <li><span style="color: var(--ink);">Classified style:</span> serif authority, mono metadata, restrained red stamps.</li>
+          <li><span style="color: var(--ink);">Archive first:</span> each transmission is searchable by code, tags, and series.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" aria-label="Contact">
+      <div class="sectionHead">
+        <h2>Contact</h2>
+        <div class="meta">For submissions & syndication</div>
+      </div>
+
+      <div class="card" style="padding: 18px;">
+        <p style="margin:0 0 12px; color: var(--muted); line-height:1.65;">
+          Replace the placeholders below with real endpoints.
+        </p>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div style="border: 1px solid var(--line); border-radius: 16px; padding: 14px; background: rgba(0,0,0,.14);">
+            <div style="font-family: var(--mono); font-size: 12px; letter-spacing:.5px; color: rgba(255,235,238,.88);">EMAIL</div>
+            <div style="margin-top:8px; font-family: var(--mono); color: var(--muted); font-size: 12px;">
+              editor@redbloodjournal.example
+            </div>
+          </div>
+          <div style="border: 1px solid var(--line); border-radius: 16px; padding: 14px; background: rgba(0,0,0,.14);">
+            <div style="font-family: var(--mono); font-size: 12px; letter-spacing:.5px; color: rgba(255,235,238,.88);">SOCIAL</div>
+            <div style="margin-top:8px; font-family: var(--mono); color: var(--muted); font-size: 12px;">
+              @redbloodjournal
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer aria-label="Footer">
+      <div class="footGrid">
+        <div>
+          <div class="footTitle">Red Blood Journal — Transmission Archive</div>
+          <div>
+            This site presents editorial and allegorical analysis in a classified-document visual language.
+            Replace sample transmissions with real posts, PDFs, or CMS-driven entries.
+          </div>
+        </div>
+        <div class="footLinks">
+          <a href="#home">Top</a>
+          <a href="#latest">Latest</a>
+          <a href="#archive">Archive</a>
+          <a href="#about">About</a>
+        </div>
+      </div>
+      <div style="margin-top: 14px; padding-bottom: 14px; font-family: var(--mono); font-size: 11px; color: rgba(245,245,247,.44);">
+        © <span id="year"></span> Red Blood Journal. All rights reserved.
+      </div>
+    </footer>
+  </main>
+
+  <script>
+    // --- Minimal client-side search + filter (no dependencies) ---
+    const updatedAt = document.getElementById('updatedAt');
+    const yearEl = document.getElementById('year');
+    const searchInput = document.getElementById('searchInput');
+    const chips = Array.from(document.querySelectorAll('.chip'));
+    const cards = Array.from(document.querySelectorAll('#txGrid .tx'));
+
+    yearEl.textContent = String(new Date().getFullYear());
+    updatedAt.textContent = new Date().toISOString().slice(0, 10);
+
+    let activeFilter = 'all';
+
+    function normalize(s){
+      return (s || '').toLowerCase().trim();
+    }
+
+    function applyFilters(){
+      const q = normalize(searchInput.value);
+
+      cards.forEach(card => {
+        const link = card.querySelector('a.blockLink');
+        const title = normalize(card.querySelector('.txTitle')?.textContent);
+        const code  = normalize(card.querySelector('.txCode')?.textContent);
+        const tags  = normalize(link?.getAttribute('data-tags'));
+        const date  = normalize(card.querySelector('.txDate')?.getAttribute('data-date'));
+
+        const matchesText =
+          !q ||
+          title.includes(q) ||
+          code.includes(q)  ||
+          tags.includes(q)  ||
+          date.includes(q);
+
+        const matchesFilter =
+          activeFilter === 'all' || tags.split(/\s+/).includes(activeFilter);
+
+        card.style.display = (matchesText && matchesFilter) ? '' : 'none';
+      });
+    }
+
+    chips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        chips.forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        activeFilter = chip.getAttribute('data-filter') || 'all';
+        applyFilters();
+      });
+    });
+
+    searchInput.addEventListener('input', applyFilters);
+
+    // Optional: sort "Latest Dispatches" by date descending
+    (function sortByDateDesc(){
+      const grid = document.getElementById('txGrid');
+      const items = Array.from(grid.querySelectorAll('.tx'));
+      items.sort((a,b) => {
+        const da = a.querySelector('.txDate')?.getAttribute('data-date') || '0000-00-00';
+        const db = b.querySelector('.txDate')?.getAttribute('data-date') || '0000-00-00';
+        return db.localeCompare(da);
+      });
+      items.forEach(el => grid.appendChild(el));
+    })();
+  </script>
+</body>
+</html>
